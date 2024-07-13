@@ -208,4 +208,73 @@ function loadTrimesh(url, scale, position, rotation, body=false) {
         mesh.rotation.set(rotation[0], rotation[1], rotation[2])
 
         scene2.add(mesh)
+
+        if (body) {
+            const mergedGeometry = BufferGeometryUtils.mergeGeometries(geometries);
+            const geometry = mergedGeometry;
+    
+            const vertices = geometry.attributes.position.array;
+            const indices = Array.from({ length: vertices.length / 3 }, (_, i) => i);
+    
+            const cannonVertices = [];
+            const cannonIndices = [];
+    
+            for (let i = 0; i < vertices.length; i += 3) {
+                cannonVertices.push(vertices[i] * scale, vertices[i + 1] * scale, vertices[i + 2] * scale);
+            }
+    
+            for (let i = 0; i < indices.length; i += 3) {
+                cannonIndices.push(indices[i], indices[i + 1], indices[i + 2]);
+            }
+    
+            const shape = new CANNON.Trimesh(cannonVertices, cannonIndices);
+            const body = new CANNON.Body({ mass: 1, shape: shape });
+    
+            body.position.set(position[0], position[1], position[2]);
+            body.quaternion.setFromEuler(rotation[0], rotation[1], rotation[2]);
+            world.addBody(body);
+    
+            totalObjs.push({name: url, mesh: mesh, body: body})
+        } else {
+            meshes.push({mesh: mesh, name: url})
+        }
+
     })
+}
+
+function initializeCanvasElement2() {
+    const rect = canvasElement2.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+        console.error('Canvas dimensions are zero. Cannot initialize Three.js.');
+        return;
+    }
+
+    renderer2.setSize(rect.width, rect.height);
+    camera2.aspect = rect.width / rect.height;
+    camera2.updateProjectionMatrix();
+
+    loadCBoardPlane()
+
+    loadTrimesh('/assets/cherry tomato.glb', 0.25, [1, 15, 0], [Math.PI / 2, 0, 0], true)
+
+    loadTrimesh('/assets/knife.glb', 5, [1, 2, -4], [Math.PI / 8, Math.PI, Math.PI / 2], false)
+
+    animateCanvasElement2();
+}
+
+let animationId1;
+let animationId2;
+let totalObjs = []
+
+function animateCanvasElement() {
+    animationId1 = requestAnimationFrame(animateCanvasElement);
+    renderer1.render(scene1, camera1);
+    if (currentModel) {
+        currentModel.rotation.y += 0.01;
+    }
+    controls1.update();
+}
+
+const timeStep = 1/60;
+const subSteps = 10;
+
