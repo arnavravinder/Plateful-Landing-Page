@@ -103,3 +103,109 @@ function setModel(model, scene) {
     scene.add(currentModel);
 }
 
+function initializeCanvasElement(event) {
+    canvasElement2.style.display = 'none';
+    canvasElement.style.display = 'block';
+    
+    setTimeout(() => {
+        const rect = canvasElement.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) {
+            console.error('Canvas dimensions are zero. Cannot initialize Three.js.');
+            return;
+        }
+
+        renderer1.setSize(rect.width, rect.height);
+        camera1.aspect = rect.width / rect.height;
+        camera1.updateProjectionMatrix();
+
+        Promise.all(preloadPromises)
+
+        const modelKey = event.target.getAttribute('data-model-url');
+        if (models[modelKey]) {
+            setModel(models[modelKey], scene1);
+        }
+
+        document.querySelectorAll('.text-section-option').forEach((element) => {
+            element.addEventListener('mouseenter', (event) => {
+                canvasElement.style.display = 'block';
+                canvasElement2.style.display = 'none';
+                stopAnimationCanvasElement2();
+                const modelKey = event.target.getAttribute('data-model-url');
+                if (models[modelKey]) {
+                    setModel(models[modelKey], scene1);
+                }
+                animateCanvasElement();
+            });
+
+            element.addEventListener('mouseleave', () => {
+                stopAnimationCanvasElement();
+                canvasElement2.style.display = 'block';
+                canvasElement.style.display = 'none';
+                animateCanvasElement2();
+            });
+        });
+
+        animateCanvasElement();
+    }, 0)
+}
+
+const meshes = []
+let planeY;
+
+function loadCBoardPlane() {
+    loader.load('/assets/cuttingboard.glb', (gltf) => {
+        const mesh = gltf.scene;
+
+        const boundingBox = new THREE.Box3().setFromObject(mesh);
+
+        const size = boundingBox.getSize(new THREE.Vector3());
+
+        mesh.position.set(0, 0, 0);
+
+        scene2.add(mesh)
+
+        const plane = new CANNON.Plane();
+        const body = new CANNON.Body({ mass: 0 , shape: plane });
+
+        planeY = size.y / 2 + 0.1
+        body.position.set(0, size.y / 2 + 0.1, 0);
+        body.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+
+        world.addBody(body);
+
+        body.addEventListener('collide', function handleCollision(event) {
+            const collidedBody = event.body;
+            if (collidedBody && collidedBody.shapes[0] instanceof CANNON.Trimesh) {
+                let tomatoObj;
+                if (totalObjs.find(obj => obj.name === '/assets/cherry tomato.glb')) {
+                    tomatoObj = totalObjs.find(obj => obj.name === '/assets/cherry tomato.glb');
+                }
+                if (collidedBody === tomatoObj.body) {
+                    animateKnife();
+                    body.removeEventListener('collide', handleCollision);
+                }
+            }
+        });
+
+    })
+}
+
+function loadTrimesh(url, scale, position, rotation, body=false) {
+    loader.load(url, (gltf) => {
+        const mesh = gltf.scene;
+
+        const geometries = [];
+
+        mesh.traverse((child) => {
+            if (child instanceof THREE.Mesh) {
+                geometries.push(child.geometry.clone());
+            }
+        });
+
+        mesh.scale.set(scale, scale, scale);
+
+        mesh.position.set(position[0], position[1], position[2])
+        mesh.rotation.set(rotation[0], rotation[1], rotation[2])
+
+        scene2.add(mesh)
+    })
