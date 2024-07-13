@@ -161,3 +161,112 @@ class SceneObject {
         });
     }   
 
+    update() {
+        this.mesh.position.copy(this.body.position);
+        this.mesh.quaternion.copy(this.body.quaternion);
+    }
+
+}
+
+class FullHollowBox {
+    constructor(position, rotation, scene, world) {
+        this.position = position;
+        this.scene = scene;
+        this.world = world;
+        this.rotation = rotation;
+    }
+
+    loadBox() {
+        const crateMesh = new SceneObject('./assets/crate.glb', 15, [this.position[0], this.position[1], this.position[2]], [this.rotation[0], this.rotation[1], this.rotation[2]], 'hollowbox', this.scene, this.world, { lid: true });
+        crateMesh.loadGLTF().then(() => {
+            totalObjects.push(crateMesh)
+            const tomatoPosition = new THREE.Vector3(this.position[0] - 2.5, this.position[1] + 0.5, this.position[2]);
+            const capsicumPosition = new THREE.Vector3(this.position[0], this.position[1] + 0.5, this.position[2]);
+            const carrotPosition = new THREE.Vector3(this.position[0] + 2.5, this.position[1] + 0.5, this.position[2]);
+    
+            const carrot = new SceneObject('./assets/carrot.glb', 0.5, tomatoPosition.toArray(), [Math.PI / 2, 0, 0], 'cylinder', scene, world)
+            const tomato = new SceneObject('./assets/cherry tomato.glb', 0.5/3, capsicumPosition.toArray(), [0, 0, 0], 'sphere', scene, world)
+            const capsicum = new SceneObject('./assets/pepper.glb', 0.5, carrotPosition.toArray(), [0, 0, 0], 'sphere', scene, world)
+    
+            tomato.loadGLTF().then(() => {
+                totalObjects.push(tomato)
+            })
+    
+            capsicum.loadGLTF().then(() => {
+                totalObjects.push(capsicum)
+            })
+    
+            carrot.loadGLTF().then(() => {
+                totalObjects.push(carrot)
+            })
+
+        })
+    }
+}
+
+setTimeout(() => {
+    const box = new FullHollowBox([-10, 20, 0], [0, Math.PI / 6, 0], scene, world)
+    const box2 = new FullHollowBox([0, 20, 8], [0, -Math.PI / 6, 0], scene, world)
+    const box3 = new FullHollowBox([8, 20, -6], [0, -Math.PI / 6, 0], scene, world)
+    box.loadBox()
+    box2.loadBox()
+    box3.loadBox()
+}, 2000)
+
+const totalObjects = []
+
+const carrot = new SceneObject('./assets/carrot.glb', 0.5, [0, 15, 0], [Math.PI / 2, 0, 0], 'cylinder', scene, world)
+const tomato = new SceneObject('./assets/cherry tomato.glb', 0.5/3, [-2.5, 15, 0], [0, 0, 0], 'sphere', scene, world)
+const capsicum = new SceneObject('./assets/pepper.glb', 0.5, [2.5, 15, 0], [0, 0, 0], 'sphere', scene, world)
+const crate = new SceneObject('./assets/crate.glb', 15, [0, 7.5, 0], [0, 0, 0], 'hollowbox', scene, world)
+
+const groundShape = new CANNON.Plane();
+const groundBody = new CANNON.Body({ mass: 0 });
+groundBody.addShape(groundShape);
+groundBody.position.y = 3; 
+groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0)
+world.addBody(groundBody);
+
+carrot.loadGLTF().then(() => {
+    totalObjects.push(carrot);
+});
+
+tomato.loadGLTF().then(() => {
+    totalObjects.push(tomato);
+});
+
+capsicum.loadGLTF().then(() => {
+    totalObjects.push(capsicum);
+});
+
+crate.loadGLTF().then(() => {
+    totalObjects.push(crate);
+});
+
+const timeStep = 1 / 60;
+const subSteps = 10;
+
+function animate() {
+    
+    requestAnimationFrame(animate);
+
+    renderer.render(scene, camera);
+
+    world.step(timeStep, undefined, subSteps)
+
+    totalObjects.forEach(obj => {
+        obj.update()
+    })
+
+    controls.update()
+
+}
+
+window.addEventListener('resize', () => {
+    renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+
+    camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
+    camera.updateProjectionMatrix();
+});
+
+animate();
