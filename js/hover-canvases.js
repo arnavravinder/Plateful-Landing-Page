@@ -278,3 +278,94 @@ function animateCanvasElement() {
 const timeStep = 1/60;
 const subSteps = 10;
 
+function animateCanvasElement2() {
+    animationId2 = requestAnimationFrame(animateCanvasElement2);
+
+    update();
+
+    renderer2.render(scene2, camera2);
+
+    world.step(timeStep, undefined, subSteps)
+
+    totalObjs.forEach(obj => {
+        obj.mesh.position.copy(obj.body.position);
+        obj.mesh.quaternion.copy(obj.body.quaternion);
+    })
+    controls2.update();
+}
+
+function stopAnimationCanvasElement() {
+    cancelAnimationFrame(animationId1);
+}
+
+function stopAnimationCanvasElement2() {
+    cancelAnimationFrame(animationId2);
+}
+
+let flag = false;
+
+document.querySelectorAll('.text-section-option').forEach(op => {
+    op.addEventListener('mouseenter', (e) => {
+        if (!flag){
+            initializeCanvasElement(e);
+            console.log('Initializing canvas element')
+            flag = true;
+        }
+    });
+});
+
+window.addEventListener('resize', () => {
+    renderer1.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+
+    camera1.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
+    camera1.updateProjectionMatrix();
+
+    renderer2.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+
+    camera2.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
+    camera2.updateProjectionMatrix();
+});
+
+function animateKnife() {
+    const knifeMesh = meshes.find(obj => obj.name === '/assets/knife.glb').mesh;
+    const initialRotation = knifeMesh.rotation.x;
+    const finalRotation = Math.PI / 1.675;
+
+    const tween = new Tween({ rotationZ: initialRotation })
+        .to({ rotationZ: finalRotation }, 750)
+        .easing(Easing.Quadratic.InOut)
+        .onUpdate(function (obj) {
+            knifeMesh.rotation.x = obj.rotationZ;
+        })
+        .onComplete(function () {
+            replaceTomato();
+        })
+        .start();
+}
+
+function replaceTomato() {
+    const leftHalfUrl = '/assets/tomato_cut.glb';
+    const rightHalfUrl = '/assets/tomato_cut.glb';
+
+    for (let i = 0; i < totalObjs.length; i++) {
+        if (totalObjs[i].name == '/assets/cherry tomato.glb') {
+            const position = [1, planeY + 0.2, 0];
+            console.log(position)
+        
+            loadTrimesh(leftHalfUrl, 0.25, position, [-Math.PI / 2, Math.PI / 2, 0], true);
+        
+            const rightHalfRotation = [Math.PI / 2, -Math.PI / 2, 0];
+            loadTrimesh(rightHalfUrl, 0.25, position, rightHalfRotation, true);
+        
+
+            world.removeBody(totalObjs[i].body);
+            scene2.remove(totalObjs[i].mesh);
+            totalObjs.splice(i, 1);
+
+            break;
+        }
+    }
+
+}
+
+initializeCanvasElement2();
