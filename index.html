@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plateful | Landing Page</title>
+    <link rel = 'stylesheet' href = 'style.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script type="importmap">
+        {
+            "imports": {
+              "three": "./node_modules/three/build/three.module.js",
+              "three-mesh-bvh": "./node_modules/three-mesh-bvh/build/index.module.js",
+              "three-buffergeometryutils": "./node_modules/three/examples/jsm/utils/BufferGeometryUtils.js",
+              "three-gltfloader": "./node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+              "three-orbitcontrols": "./node_modules/three/examples/jsm/controls/OrbitControls.js",
+              "cannon": "./node_modules/cannon-es/dist/cannon-es.js",
+              "tween": "./node_modules/@tweenjs/tween.js/dist/tween.esm.js"
+            }
+          }
+    </script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script type = 'module' src = 'js/main.js'></script>
+    <script type = 'module' src = 'js/sustainability.js'></script>
+    <script type = 'module' src = 'js/hover-canvases.js'></script>
+    <script type = 'module' src = 'js/salad.js'></script>
+</head>
+<body>
+
+    <nav class = "navbar">
+        <ul class = "nav-ul">
+            <li class = "nav-item logo-item">
+                <i class="fa-solid fa-folder-open"></i>&nbsp;&nbsp;&nbsp;
+                <a class = "nav-link logo-link">Plateful</a>
+            </li>
+            <li class = "nav-item">
+                <a class = "nav-link" href = "#">Home</a>
+            </li>
+            <li class = "nav-item">
+                <a class = "nav-link" href = "#mission">Mission</a>
+            </li>
+            <li class = "nav-item">
+                <a class = "nav-link" href = "#services">Services</a>
+            </li>
+            <div class = "button-container" onclick = "window.location.href = 'login.html'">
+                <button class = "login">Log In</button>
+            </div>
+        </ul>
+    </nav>
+
+    <div class = 'main-landing'>
+        <canvas class = 'main-landing-hover-three'></canvas>
+        <div class = 'main-landing-subsection'>
+            <div class ='large-text'>
+                <h1>SAVING GOOD FOOD FROM WASTE</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class = 'large-section' id = 'mission'>
+        <div class = 'canvas-container canvas-container-s'>
+            <canvas class = 'large-section-canvas-three three-canvas'></canvas>
+        </div>
+        <div class = 'text-section text-section-float-right'>
+            <h1 data-aos="fade-left" data-aos-delay="500" class = 'text-section-header'><span class = 'bold-orange'>Empowering</span> <br> Sustainability</h1>
+            <p data-aos="fade-left" data-aos-delay="700" class = 'text-section-para'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet, error magnam exercitationem odit eligendi non iure! Deserunt ipsa placeat, nemo quae ducimus, aut reprehenderit autem tempora adipisci explicabo dolorem voluptatem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero minima laborum nam cum rerum, saepe eligendi ab pariatur voluptas accusamus reprehenderit et neque qui aliquid error fugit ipsa. Inventore, nam. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Similique, iste odio cum explicabo fugiat iusto voluptas dignissimos minima facere provident laborum accusantium sapiente, voluptates adipisci enim tenetur? Officiis, nihil sapiente! Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo, laboriosam error totam illo eos ut repellat aliquid quisquam earum commodi? Accusantium reprehenderit voluptatibus aliquid odio. Perferendis ipsam maiores porro necessitatibus.</p>
+        </div>
+    </div>
+
+    <div class = 'large-section' id = 'services'>
+        <div class = 'text-section text-section-float-left'>
+            <h1 data-aos="fade-right" data-aos-delay="500" class = 'text-section-header'><span class = 'bold-orange'>Cutting-Edge</span> <br> Services</h1>
+            <div class = 'text-section-options'>
+                <div class = 'text-section-option begin-option' data-model-url = 'bank'>
+                    <div class = 'text-section-option-icon'>
+                        <i class="fa-solid fa-piggy-bank"></i>
+                    </div>
+                    <div class = 'text-section-option-text'>
+                        <h2>Cheap</h2>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate, repudiandae error libero blanditiis quos corporis omnis numquam deleniti voluptatibus quae labore ut ratione impedit enim. Magni sed esse odio corporis.</p>
+                    </div>
+                </div>
+                <div class = 'text-section-option' data-model-url = 'fast'>
+                    <div class = 'text-section-option-icon'>
+                        <i class="fa-solid fa-bolt-lightning"></i>                    
+                    </div>
+                    <div class = 'text-section-option-text'>
+                        <h2>Fast</h2>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate, repudiandae error libero blanditiis quos corporis omnis numquam deleniti voluptatibus quae labore ut ratione impedit enim. Magni sed esse odio corporis.</p>
+                    </div>
+                </div>
+                <div class = 'text-section-option' data-model-url = 'security'>
+                    <div class = 'text-section-option-icon'>
+                        <i class="fa-solid fa-lock"></i>                    
+                    </div>
+                    <div class = 'text-section-option-text'>
+                        <h2>Secure</h2>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate, repudiandae error libero blanditiis quos corporis omnis numquam deleniti voluptatibus quae labore ut ratione impedit enim. Magni sed esse odio corporis.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='canvas-container canvas-container-h'>
+            <canvas class = 'three-canvas-2 three-canvas'></canvas>
+            <canvas class = 'hover-canvas-three three-canvas'></canvas>
+        </div>
+    </div>
+    <div class = 'large-section salad-section'>
+        <canvas class = 'salad-canvas'></canvas>
+        <div class = 'overlay-text'>
+            <h1 class = 'contact-us-header'>CONTACT US</h1>
+            <div class=  'contact-us-numbers'>
+                <p>+91 123456789</p>
+                <p>+91 123456789</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
